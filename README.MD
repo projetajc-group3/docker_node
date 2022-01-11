@@ -1,4 +1,4 @@
-# Group 1 : eazytraining node's app CICD
+# Devops Project 2 : eazytraining node's app CICD
 
 ## 1- Goal
 The goal of this project is to verify your ability to automate build and deploy containerized applications.
