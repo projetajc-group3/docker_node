@@ -139,7 +139,7 @@ pipeline {
             agent any
             steps {
                 script{
-                    slackSend (color: '#ff7f00', message: "PENDING VALIDATION: $EC2_STAGING_HOST:$EXTERNAL_PORT")
+                    slackSend (color: '#ff7f00', message: "PENDING VALIDATION: ${env.EC2_STAGING_HOST}:${env.EXTERNAL_PORT}")
                     
                     timeout(time: 30, unit: "MINUTES") {
                         input message: 'Do you want to approve the deploy in production?', ok: 'Yes'
