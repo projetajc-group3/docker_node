@@ -1,3 +1,7 @@
+# projetajc_node
+[![Build Status](http://54.174.144.82:8080/buildStatus/icon?job=test)](http://54.174.144.82:8080/job/test/)
+
+
 # Devops Project 2 : eazytraining node's app CICD
 
 ## 1- Goal
