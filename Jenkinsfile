@@ -9,9 +9,9 @@ pipeline {
         CONTAINER_NAME = "webapp"
         CONTAINER_PORT = "3000"
         EXTERNAL_PORT = "30001"
+        URL_GIT_NODE ="https://github.com/projetajc-group3/projetajc_node.git"
         URL_GIT_TERRAFORM ="https://github.com/projetajc-group3/terraform_node.git"
         URL_GIT_DEPLOY_DOCKER = "https://github.com/projetajc-group3/docker_role_deploy.git"
-        URL_GIT_NODE ="https://github.com/projetajc-group3/docker_node.git"
         URL_GIT_DEPLOY_KUBERNETES = "https://github.com/projetajc-group3/kubernetes_role_deploy.git"
     }
    
