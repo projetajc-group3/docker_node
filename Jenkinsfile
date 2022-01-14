@@ -139,7 +139,8 @@ pipeline {
             agent any
             steps {
                 script{
-                    slackSend (color: '#ff7f00', message: "PENDING VALIDATION: ${env.EC2_STAGING_HOST}:${env.EXTERNAL_PORT}")
+                    slackSend (color: '#ff7f00', message: "STAGING APPLICATION PENDING VALIDATION ON http://${env.EC2_STAGING_HOST}:${env.EXTERNAL_PORT}")
+                    slackSend (color: '#ff7f00', message: "VALIDATION : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
                     
                     timeout(time: 30, unit: "MINUTES") {
                         input message: 'Do you want to approve the deploy in production?', ok: 'Yes'
@@ -210,6 +211,7 @@ pipeline {
     post {
         success{
             slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+            slackSend (color: '#00FF00', message: "APPLICATION AVAILABLE ON http://${env.EC2_PRODUCTION_HOST}:${env.EXTERNAL_PORT}")
         }
         failure {
             slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
