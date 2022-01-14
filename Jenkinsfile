@@ -152,6 +152,7 @@ pipeline {
                     git clone $URL_GIT_TERRAFORM
                     cd terraform_node/prod
                     terraform init -reconfigure
+                    terraform destroy --auto-approve 
                     terraform apply --auto-approve
                     terraform output ec2_ip > ec2_ip.txt
                     '''
@@ -181,7 +182,6 @@ pipeline {
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} git clone $URL_GIT_DEPLOY_KUBERNETES
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-galaxy install -r kubernetes_role_deploy/roles/requirements.yml
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-playbook -i kubernetes_role_deploy/hosts.yml kubernetes_role_deploy/kubernetes.yml --extra-vars \\"name_containers=$CONTAINER_NAME image_containers=$USERNAME/$IMAGE_NAME:$IMAGE_TAG\\"
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} sudo rm -rf .ansible/roles/kubernetes_role || true
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} sudo rm -rf kubernetes_role_deploy || true
                             '''
                         }
