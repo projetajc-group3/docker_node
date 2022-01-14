@@ -110,10 +110,7 @@ pipeline {
         }
         
         stage ('Deploy application (STAGING)') {
-            agent any 
-           /* when{
-                expression{ GIT_BRANCH == 'origin/master'}
-            }*/
+            agent any
             steps{
                 withCredentials([sshUserPrivateKey(credentialsId: "ec2_test_private_key", keyFileVariable: 'keyfile', usernameVariable: 'NUSER')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -165,9 +162,9 @@ pipeline {
 
         stage ('Deploy application (PRODUCTION)') {
             agent any 
-           /* when{
-                expression{ GIT_BRANCH == 'origin/master'}
-            }*/
+            when{
+                expression{GIT_BRANCH == 'origin/master'}
+            }
             steps{
                 withCredentials([sshUserPrivateKey(credentialsId: "ec2_test_private_key", keyFileVariable: 'keyfile', usernameVariable: 'NUSER')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -190,25 +187,7 @@ pipeline {
                 }
             } 
         }
-        
-        
-        
-/* 
-        stage ('Terraform (Test environment destoy)') {
-            agent any
-            steps {
-                script{
-                    sh '''
-                    cd src_terraform/terraform_node/test
-                    terraform destroy --auto-approve
-                    cd ../../..
-                    rm -rf src_terraform
-                    '''
-                }
-            }
-        }
- */     
-   }
+    }
 
     post {
         success{
