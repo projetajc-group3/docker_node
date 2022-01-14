@@ -104,7 +104,7 @@ pipeline {
                     terraform output ec2_ip > ec2_ip.txt
                     '''
                     env.EC2_STAGING_HOST = sh( script: "sed -e 's/\"//g' src_terraform/terraform_node/preprod/ec2_ip.txt",returnStdout: true).trim()
-                    sleep 15
+                    sleep 20
                 }
             }
         }
@@ -119,15 +119,15 @@ pipeline {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} sudo apt-get update -y || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} sudo apt-get install ansible git -y || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} git clone $URL_GIT_DEPLOY_DOCKER || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} ansible-galaxy install -r docker_role_deploy/roles/requirements.yml || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} ansible-playbook -i docker_role_deploy/hosts.yml docker_role_deploy/docker.yml || true
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} sudo apt-get update -y
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} sudo apt-get install ansible -y
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} git clone $URL_GIT_DEPLOY_DOCKER
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} ansible-galaxy install -r docker_role_deploy/roles/requirements.yml
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} ansible-playbook -i docker_role_deploy/hosts.yml docker_role_deploy/docker.yml
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} sudo rm -rf docker_role_deploy || true
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} docker stop $CONTAINER_NAME || true
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} docker rm $CONTAINER_NAME || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} docker run -d -p $EXTERNAL_PORT:$CONTAINER_PORT --name $CONTAINER_NAME $USERNAME/$IMAGE_NAME:$IMAGE_TAG || true
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} docker run -d -p $EXTERNAL_PORT:$CONTAINER_PORT --name $CONTAINER_NAME $USERNAME/$IMAGE_NAME:$IMAGE_TAG
                             '''
                         }
                     }
@@ -157,7 +157,7 @@ pipeline {
                     terraform output ec2_ip > ec2_ip.txt
                     '''
                     env.EC2_PRODUCTION_HOST = sh( script: "sed -e 's/\"//g' src_terraform/terraform_node/prod/ec2_ip.txt",returnStdout: true).trim()
-                    sleep 15
+                    sleep 25
                 }
             }
         }
@@ -172,15 +172,15 @@ pipeline {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} sudo apt-get update -y || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} sudo apt-get install ansible git -y || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} git clone $URL_GIT_DEPLOY_DOCKER || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-galaxy install -r docker_role_deploy/roles/requirements.yml || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-playbook -i docker_role_deploy/hosts.yml docker_role_deploy/docker.yml || true
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} sudo apt-get update -y
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} sudo apt-get install ansible -y
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} git clone $URL_GIT_DEPLOY_DOCKER
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-galaxy install -r docker_role_deploy/roles/requirements.yml
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-playbook -i docker_role_deploy/hosts.yml docker_role_deploy/docker.yml
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} sudo rm -rf docker_role_deploy || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} git clone $URL_GIT_DEPLOY_KUBERNETES || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-galaxy install -r kubernetes_role_deploy/roles/requirements.yml || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-playbook -i kubernetes_role_deploy/hosts.yml kubernetes_role_deploy/kubernetes.yml --extra-vars \\"name_containers=$CONTAINER_NAME image_containers=$USERNAME/$IMAGE_NAME:$IMAGE_TAG\\" || true
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} git clone $URL_GIT_DEPLOY_KUBERNETES
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-galaxy install -r kubernetes_role_deploy/roles/requirements.yml
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-playbook -i kubernetes_role_deploy/hosts.yml kubernetes_role_deploy/kubernetes.yml --extra-vars \\"name_containers=$CONTAINER_NAME image_containers=$USERNAME/$IMAGE_NAME:$IMAGE_TAG\\"
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} sudo rm -rf kubernetes_role_deploy || true
                             '''
                         }
