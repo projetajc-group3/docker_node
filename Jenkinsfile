@@ -24,12 +24,12 @@ pipeline {
             steps{
                 script{ 
                     sh'''
-                    rm -rf docker_node/ || true
+                    rm -rf projetajc_node/ || true
                     docker stop $CONTAINER_NAME || true
                     docker rm $CONTAINER_NAME || true
                     docker rmi $USERNAME/$IMAGE_NAME:$IMAGE_TAG || true
                     git clone $URL_GIT_NODE || true
-                    cd docker_node
+                    cd  projetajc_node
                     docker build -t $USERNAME/$IMAGE_NAME:$IMAGE_TAG .                            
                     '''
                 }
@@ -54,7 +54,7 @@ pipeline {
                 snykSecurity(
                     snykInstallation: 'snyk@latest',
                     snykTokenId: 'snyk-token',
-                    targetFile: 'docker_node/package.json',
+                    targetFile: 'projetajc_node/package.json',
                     failOnIssues: false,
                 )
             }
