@@ -104,7 +104,7 @@ pipeline {
                     terraform output ec2_ip > ec2_ip.txt
                     '''
                     env.EC2_STAGING_HOST = sh( script: "sed -e 's/\"//g' src_terraform/terraform_node/preprod/ec2_ip.txt",returnStdout: true).trim()
-                    sleep 10
+                    sleep 15
                 }
             }
         }
@@ -154,7 +154,7 @@ pipeline {
                     terraform output ec2_ip > ec2_ip.txt
                     '''
                     env.EC2_PRODUCTION_HOST = sh( script: "sed -e 's/\"//g' src_terraform/terraform_node/prod/ec2_ip.txt",returnStdout: true).trim()
-                    sleep 10
+                    sleep 15
                 }
             }
         }
