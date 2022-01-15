@@ -10,7 +10,7 @@ pipeline {
         CONTAINER_PORT = "3000"
         TEST_EXTERNAL_PORT = "30001"
         STAGING_EXTERNAL_PORT = "30001"
-        PROD_EXTERNAL_PORT = "80"
+        PROD_EXTERNAL_PORT = "30000"
         URL_GIT_NODE ="https://github.com/projetajc-group3/projetajc_node.git"
         URL_GIT_TERRAFORM ="https://github.com/projetajc-group3/terraform_node.git"
         URL_GIT_DEPLOY_DOCKER = "https://github.com/projetajc-group3/docker_role_deploy.git"
