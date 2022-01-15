@@ -8,7 +8,9 @@ pipeline {
         USERNAME = "projetajcgroup3"
         CONTAINER_NAME = "webapp"
         CONTAINER_PORT = "3000"
-        EXTERNAL_PORT = "30001"
+        TEST_EXTERNAL_PORT = "30001"
+        STAGING_EXTERNAL_PORT = "30001"
+        PROD_EXTERNAL_PORT = "80"
         URL_GIT_NODE ="https://github.com/projetajc-group3/projetajc_node.git"
         URL_GIT_TERRAFORM ="https://github.com/projetajc-group3/terraform_node.git"
         URL_GIT_DEPLOY_DOCKER = "https://github.com/projetajc-group3/docker_role_deploy.git"
@@ -41,7 +43,7 @@ pipeline {
             steps{
                 script{ 
                     sh'''
-                    docker run -d -p $EXTERNAL_PORT:$CONTAINER_PORT --name $CONTAINER_NAME $USERNAME/$IMAGE_NAME:$IMAGE_TAG
+                    docker run -d -p $TEST_EXTERNAL_PORT:$CONTAINER_PORT --name $CONTAINER_NAME $USERNAME/$IMAGE_NAME:$IMAGE_TAG
                     '''
                 }
             }
@@ -65,7 +67,7 @@ pipeline {
             steps{
                 script{
                    sh '''
-                       curl http://localhost:$EXTERNAL_PORT/ | tac | tac | grep -iq "DevOps Foundation"
+                       curl http://localhost:$TEST_EXTERNAL_PORT/ | tac | tac | grep -iq "DevOps Foundation"
                    '''
                 }
             }
@@ -126,7 +128,7 @@ pipeline {
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} sudo rm -rf docker_role_deploy || true
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} docker stop $CONTAINER_NAME || true
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} docker rm $CONTAINER_NAME || true
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} docker run -d -p $EXTERNAL_PORT:$CONTAINER_PORT --name $CONTAINER_NAME $USERNAME/$IMAGE_NAME:$IMAGE_TAG
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_STAGING_HOST} docker run -d -p $STAGING_EXTERNAL_PORT:$CONTAINER_PORT --name $CONTAINER_NAME $USERNAME/$IMAGE_NAME:$IMAGE_TAG
                             '''
                         }
                     }
@@ -138,7 +140,7 @@ pipeline {
             agent any
             steps {
                 script{
-                    slackSend (color: '#ff7f00', message: "STAGING APPLICATION PENDING VALIDATION ON http://${env.EC2_STAGING_HOST}:${env.EXTERNAL_PORT}")
+                    slackSend (color: '#ff7f00', message: "STAGING APPLICATION PENDING VALIDATION ON http://${env.EC2_STAGING_HOST}:${env.STAGING_EXTERNAL_PORT}")
                     slackSend (color: '#ff7f00', message: "VALIDATION : Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
                     
                     timeout(time: 30, unit: "MINUTES") {
@@ -181,7 +183,7 @@ pipeline {
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} sudo rm -rf docker_role_deploy || true
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} git clone $URL_GIT_DEPLOY_KUBERNETES
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-galaxy install -r kubernetes_role_deploy/roles/requirements.yml
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-playbook -i kubernetes_role_deploy/hosts.yml kubernetes_role_deploy/kubernetes.yml --extra-vars \\"name_containers=$CONTAINER_NAME image_containers=$USERNAME/$IMAGE_NAME:$IMAGE_TAG port_containers=$CONTAINER_PORT\\"
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} ansible-playbook -i kubernetes_role_deploy/hosts.yml kubernetes_role_deploy/kubernetes.yml --extra-vars \\"name_containers=$CONTAINER_NAME image_containers=$USERNAME/$IMAGE_NAME:$IMAGE_TAG containers_port=$CONTAINER_PORT external_port=$PROD_EXTERNAL_PORT\\"
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${EC2_PRODUCTION_HOST} sudo rm -rf kubernetes_role_deploy || true
                             '''
                         }
@@ -194,7 +196,7 @@ pipeline {
     post {
         success{
             slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-            slackSend (color: '#00FF00', message: "APPLICATION AVAILABLE ON http://${env.EC2_PRODUCTION_HOST}:${env.EXTERNAL_PORT}")
+            slackSend (color: '#00FF00', message: "APPLICATION AVAILABLE ON http://${env.EC2_PRODUCTION_HOST}:${env.PROD_EXTERNAL_PORT}")
         }
         failure {
             slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
