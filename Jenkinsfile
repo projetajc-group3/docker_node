@@ -57,6 +57,7 @@ pipeline {
                     snykInstallation: 'snyk@latest',
                     snykTokenId: 'snyk-token',
                     targetFile: 'projetajc_node/package.json',
+                    failOnIssues: false,
                 )
             }
         }
