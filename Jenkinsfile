@@ -30,7 +30,7 @@ pipeline {
                     docker stop $CONTAINER_NAME || true
                     docker rm $CONTAINER_NAME || true
                     docker rmi $USERNAME/$IMAGE_NAME:$IMAGE_TAG || true
-                    git clone $URL_GIT_NODE || true
+                    git clone --branch test_without_destroy $URL_GIT_NODE
                     cd  projetajc_node
                     docker build -t $USERNAME/$IMAGE_NAME:$IMAGE_TAG .                            
                     '''
@@ -100,8 +100,7 @@ pipeline {
                     cd src_terraform
                     git clone $URL_GIT_TERRAFORM
                     cd terraform_node/preprod
-                    terraform init -reconfigure
-                    terraform destroy --auto-approve || true               
+                    terraform init -reconfigure              
                     terraform apply --auto-approve
                     terraform output ec2_ip > ec2_ip.txt
                     '''
@@ -153,7 +152,6 @@ pipeline {
                     git clone $URL_GIT_TERRAFORM
                     cd terraform_node/prod
                     terraform init -reconfigure
-                    terraform destroy --auto-approve || true
                     terraform apply --auto-approve
                     terraform output ec2_ip > ec2_ip.txt
                     '''
