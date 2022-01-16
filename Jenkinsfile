@@ -163,9 +163,9 @@ pipeline {
 
         stage ('Deploy application (PRODUCTION)') {
             agent any 
-            when{
+            /*when{
                 expression{GIT_BRANCH == 'origin/master'}
-            }
+            }*/
             steps{
                 withCredentials([sshUserPrivateKey(credentialsId: "ec2_test_private_key", keyFileVariable: 'keyfile', usernameVariable: 'NUSER')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
