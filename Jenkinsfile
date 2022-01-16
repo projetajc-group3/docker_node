@@ -90,7 +90,7 @@ pipeline {
            }
        }  
      
-       stage ('Destroy and creation ec2 instance (STAGING)') {
+       stage ('Creation ec2 instance if necessary (STAGING)') {
             agent any
             steps {
                 script{
@@ -134,7 +134,7 @@ pipeline {
             } 
         }
         
-        stage ('Creation ec2 instance (PRODUCTION)') {
+        stage ('Creation ec2 instance if necessary (PRODUCTION)') {
             agent any
             steps {
                 script{
