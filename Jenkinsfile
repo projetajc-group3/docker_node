@@ -101,7 +101,7 @@ pipeline {
                     git clone $URL_GIT_TERRAFORM
                     cd terraform_node/preprod
                     terraform init -reconfigure
-                    terraform destroy --auto-approve                   
+                    terraform destroy --auto-approve || true               
                     terraform apply --auto-approve
                     terraform output ec2_ip > ec2_ip.txt
                     '''
@@ -153,7 +153,7 @@ pipeline {
                     git clone $URL_GIT_TERRAFORM
                     cd terraform_node/prod
                     terraform init -reconfigure
-                    terraform destroy --auto-approve 
+                    terraform destroy --auto-approve || true
                     terraform apply --auto-approve
                     terraform output ec2_ip > ec2_ip.txt
                     '''
