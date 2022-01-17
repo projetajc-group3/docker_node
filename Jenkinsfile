@@ -113,7 +113,7 @@ pipeline {
         stage ('Deploy application (STAGING)') {
             agent any
             steps{
-                withCredentials([sshUserPrivateKey(credentialsId: "ec2_test_private_key", keyFileVariable: 'keyfile', usernameVariable: 'NUSER')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: "ec2_staging_private_key", keyFileVariable: 'keyfile', usernameVariable: 'NUSER')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
@@ -168,7 +168,7 @@ pipeline {
                 expression{GIT_BRANCH == 'origin/master'}
             }
             steps{
-                withCredentials([sshUserPrivateKey(credentialsId: "ec2_test_private_key", keyFileVariable: 'keyfile', usernameVariable: 'NUSER')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: "ec2_prod_private_key", keyFileVariable: 'keyfile', usernameVariable: 'NUSER')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
