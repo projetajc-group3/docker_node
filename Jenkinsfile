@@ -48,6 +48,17 @@ pipeline {
                 }
             }
         }
+        
+         stage ('Test application (TEST)') {
+            agent {label 'Agent-test'}
+            steps{
+                script{
+                   sh '''
+                       curl http://localhost:$TEST_EXTERNAL_PORT/ | tac | tac | grep -iq "DevOps Foundation"
+                   '''
+                }
+            }
+        }
          
         stage('Scan code (TEST)') {
             agent { label 'Agent-test'}
@@ -60,18 +71,7 @@ pipeline {
                 )
             }
         }
-        
-        stage ('Test application (TEST)') {
-            agent {label 'Agent-test'}
-            steps{
-                script{
-                   sh '''
-                       curl http://localhost:$TEST_EXTERNAL_PORT/ | tac | tac | grep -iq "DevOps Foundation"
-                   '''
-                }
-            }
-        }
-         
+
         stage ('Clean test environment and save artifact (TEST)') {
            agent {label 'Agent-test'}
            environment{
