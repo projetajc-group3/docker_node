@@ -4,7 +4,7 @@ def EMAIL_RECIPIENTS = "projetajc.group3@gmail.com"
 pipeline {
     environment {
         IMAGE_NAME = "node"
-        IMAGE_TAG = "1.0"
+        IMAGE_TAG = "1.1"
         USERNAME = "projetajcgroup3"
         CONTAINER_NAME = "webapp"
         CONTAINER_PORT = "3000"
