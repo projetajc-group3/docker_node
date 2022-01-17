@@ -215,6 +215,7 @@ pipeline {
        /* sendEmail(EMAIL_RECIPIENTS);
     }*/
 }
+}
 
 /*def sendEmail(recipients) {
     mail(
