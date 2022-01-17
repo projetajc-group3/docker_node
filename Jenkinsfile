@@ -204,7 +204,7 @@ pipeline {
             slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
     }
-    Post {
+    /*Post {
         success{
             mail(
             to: EMAIL_RECIPIENTS,
@@ -212,7 +212,7 @@ pipeline {
             body: "Check console output at: ${env.BUILD_URL}/console" + "\n")
                 }
             
-        }
+        }*/
 }
 
 
