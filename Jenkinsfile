@@ -1,6 +1,6 @@
 def EC2_PRODUCTION_HOST = "@IP" 
 def EC2_STAGING_HOST = "@IP"
-
+def EMAIL_RECIPIENTS = "projetajc.group3@gmail.com"
 pipeline {
     environment {
         IMAGE_NAME = "node"
@@ -204,4 +204,14 @@ pipeline {
             slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
     }
+    finally {
+        sendEmail(EMAIL_RECIPIENTS);
+    }
+}
+
+def sendEmail(recipients) {
+    mail(
+            to: recipients,
+            subject: "Build ${env.BUILD_NUMBER} - ${currentBuild.currentResult} - (${currentBuild.fullDisplayName})",
+            body: "Check console output at: ${env.BUILD_URL}/console" + "\n")
 }
